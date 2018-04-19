@@ -28,7 +28,7 @@
         "app/shared/*"
       ],
       "@core": [
-        "app/core/"
+        "app/core"
       ],
       "@core/*": [
         "app/core/*"
@@ -40,10 +40,7 @@
         "testing/*"
       ],
       "@env": [
-        "environments/"
-      ],
-      "@env/*": [
-        "environments/*"
+        "environments/environment"
       ]
     }
   },

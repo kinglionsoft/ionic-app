@@ -78,6 +78,7 @@ export class WorkListPage {
   goToSessionDetail(sessionData: any) {
     // go to the session detail page
     // and pass in the session data
+    console.dir(sessionData);
   }
 
   addFavorite(slidingItem: ItemSliding, sessionData: any) {
