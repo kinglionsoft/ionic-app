@@ -5,11 +5,14 @@
     </button>
 
     <ion-segment [(ngModel)]="segment" (ionChange)="updateSchedule()">
-      <ion-segment-button value="all">
-        All
+      <ion-segment-button value="todo">
+        待办
       </ion-segment-button>
-      <ion-segment-button value="favorites">
-        Favorites
+      <ion-segment-button value="top">
+        置顶
+      </ion-segment-button>
+      <ion-segment-button value="done">
+        已办
       </ion-segment-button>
     </ion-segment>
 
@@ -21,7 +24,7 @@
   </ion-navbar>
 
   <ion-toolbar no-border-top>
-    <ion-searchbar color="primary" [(ngModel)]="queryText" (ionInput)="updateSchedule()" placeholder="Search">
+    <ion-searchbar color="primary" [(ngModel)]="queryText" (ionInput)="updateSchedule()" placeholder="搜索">
     </ion-searchbar>
   </ion-toolbar>
 </ion-header>
@@ -31,31 +34,31 @@
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
 
-  <ion-list #scheduleList [hidden]="shownSessions === 0">
+  <ion-list #workList [hidden]="shownSessions === 0">
 
-    <ion-item-group *ngFor="let group of groups" [hidden]="group.hide">
+    <ion-item-group *ngFor="let group of groups">
 
       <ion-item-divider sticky>
         <ion-label>
-          {{group.time}}
+          {{group.Date}}
         </ion-label>
       </ion-item-divider>
 
-      <ion-item-sliding *ngFor="let session of group.sessions" #slidingItem [attr.track]="session.tracks[0] | lowercase" [hidden]="session.hide">
+      <ion-item-sliding *ngFor="let work of group.works" #slidingItem [attr.track]="session.tracks[0] | lowercase" [hidden]="session.hide">
 
-        <button ion-item (click)="goToSessionDetail(session)">
-          <h3>{{session.name}}</h3>
+        <button ion-item (click)="goToWork(work)">
+          <h3>{{work.Subject}}</h3>
           <p>
-            {{session.timeStart}} &mdash; {{session.timeEnd}}: {{session.location}}
+            {{work.ReceiptTime | date: 'HH:mm'}} : {{work.From}}
           </p>
         </button>
 
         <ion-item-options>
-          <button ion-button color="favorite" (click)="addFavorite(slidingItem, session)" *ngIf="segment === 'all'">
-            Favorite
+          <button ion-button color="favorite" (click)="addTop(slidingItem, work)" *ngIf="segment === 'todo'">
+            置顶
           </button>
-          <button ion-button color="danger" (click)="removeFavorite(slidingItem, session, 'Remove Favorite')" *ngIf="segment === 'favorites'">
-            Remove
+          <button ion-button color="danger" (click)="removeTop(slidingItem, work)" *ngIf="segment === 'top'">
+            移除
           </button>
         </ion-item-options>
 
@@ -65,8 +68,8 @@
 
   </ion-list>
 
-  <ion-list-header [hidden]="shownSessions > 0">
-    No Sessions Found
+  <ion-list-header [hidden]="groups.length === 0">
+    暂无数据...
   </ion-list-header>
 
   <ion-fab bottom right #fab>

@@ -2,15 +2,8 @@ import { Component, ViewChild } from '@angular/core';
 
 import { AlertController, App, FabContainer, ItemSliding, List, ModalController, NavController, ToastController, LoadingController, Refresher, IonicPage } from 'ionic-angular';
 
-/*
-  To learn how to use third party libs in an
-  Ionic app check out our docs here: http://ionicframework.com/docs/v2/resources/third-party-libs/
-*/
-// import moment from 'moment';
-
-import { ConferenceData } from '../../../providers/conference-data';
-import { UserData } from '../../../providers/user-data';
 import { ScheduleFilterPage } from '../../schedule-filter/schedule-filter';
+import { WorkService } from '@pages/works';
 
 @IonicPage({
   name: 'work-list',
@@ -22,11 +15,9 @@ import { ScheduleFilterPage } from '../../schedule-filter/schedule-filter';
 })
 export class WorkListPage {
 
-  // the list is a child of the schedule page
-  // @ViewChild('scheduleList') gets a reference to the list
-  // with the variable #scheduleList, `read: List` tells it to return
+  // `read: List` tells it to return
   // the List and not a reference to the element
-  @ViewChild('scheduleList', { read: List }) scheduleList: List;
+  @ViewChild('workList', { read: List }) workList: List;
 
   dayIndex = 0;
   queryText = '';
@@ -43,8 +34,7 @@ export class WorkListPage {
     public modalCtrl: ModalController,
     public navCtrl: NavController,
     public toastCtrl: ToastController,
-    public confData: ConferenceData,
-    public user: UserData,
+    private service: WorkService
   ) { }
 
   ionViewDidLoad() {
@@ -54,12 +44,11 @@ export class WorkListPage {
 
   updateSchedule() {
     // Close any open sliding items when the schedule updates
-    this.scheduleList && this.scheduleList.closeSlidingItems();
-
-    this.confData.getTimeline(this.dayIndex, this.queryText, this.excludeTracks, this.segment).subscribe((data: any) => {
-      this.shownSessions = data.shownSessions;
-      this.groups = data.groups;
-    });
+    this.workList && this.workList.closeSlidingItems();
+    this.service.getWorks(1, 10)
+      .subscribe((data: any) => {
+        this.groups = data;
+      });
   }
 
   presentFilter() {
@@ -81,40 +70,19 @@ export class WorkListPage {
     console.dir(sessionData);
   }
 
-  addFavorite(slidingItem: ItemSliding, sessionData: any) {
-
-    if (this.user.hasFavorite(sessionData.name)) {
-      // woops, they already favorited it! What shall we do!?
-      // prompt them to remove it
-      this.removeFavorite(slidingItem, sessionData, 'Favorite already added');
-    } else {
-      // remember this session as a user favorite
-      this.user.addFavorite(sessionData.name);
-
-      // create an alert instance
-      let alert = this.alertCtrl.create({
-        title: 'Favorite Added',
-        buttons: [{
-          text: 'OK',
-          handler: () => {
-            // close the sliding item
-            slidingItem.close();
-          }
-        }]
-      });
-      // now present the alert on top of all other content
-      alert.present();
-    }
-
+  addTop(slidingItem: ItemSliding, sessionData: any) {
+    console.log(slidingItem);
+    console.log(sessionData);
   }
 
-  removeFavorite(slidingItem: ItemSliding, sessionData: any, title: string) {
+  removeTop(slidingItem: ItemSliding, sessionData: any) {
+    console.log(sessionData);
     let alert = this.alertCtrl.create({
-      title: title,
+      title: '取消置顶',
       message: 'Would you like to remove this session from your favorites?',
       buttons: [
         {
-          text: 'Cancel',
+          text: '取消',
           handler: () => {
             // they clicked the cancel button, do not remove the session
             // close the sliding item and hide the option buttons
@@ -122,10 +90,10 @@ export class WorkListPage {
           }
         },
         {
-          text: 'Remove',
+          text: '确认',
           handler: () => {
             // they want to remove this session from their favorites
-            this.user.removeFavorite(sessionData.name);
+            //  this.user.removeFavorite(sessionData.name);
             this.updateSchedule();
 
             // close the sliding item and hide the option buttons
@@ -150,21 +118,22 @@ export class WorkListPage {
   }
 
   doRefresh(refresher: Refresher) {
-    this.confData.getTimeline(this.dayIndex, this.queryText, this.excludeTracks, this.segment).subscribe((data: any) => {
-      this.shownSessions = data.shownSessions;
-      this.groups = data.groups;
+    console.log(refresher);
+    // this.confData.getTimeline(this.dayIndex, this.queryText, this.excludeTracks, this.segment).subscribe((data: any) => {
+    //   this.shownSessions = data.shownSessions;
+    //   this.groups = data.groups;
 
-      // simulate a network request that would take longer
-      // than just pulling from out local json file
-      setTimeout(() => {
-        refresher.complete();
+    //   // simulate a network request that would take longer
+    //   // than just pulling from out local json file
+    //   setTimeout(() => {
+    //     refresher.complete();
 
-        const toast = this.toastCtrl.create({
-          message: 'Sessions have been updated.',
-          duration: 3000
-        });
-        toast.present();
-      }, 1000);
-    });
+    //     const toast = this.toastCtrl.create({
+    //       message: 'Sessions have been updated.',
+    //       duration: 3000
+    //     });
+    //     toast.present();
+    //   }, 1000);
+    // });
   }
 }

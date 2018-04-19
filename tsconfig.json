@@ -41,6 +41,9 @@
       ],
       "@env": [
         "environments/environment"
+      ],
+      "@pages/*": [
+        "pages/*"
       ]
     }
   },
