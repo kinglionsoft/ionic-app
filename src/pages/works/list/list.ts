@@ -7,7 +7,8 @@ import { WorkService } from '@pages/works';
 
 @IonicPage({
   name: 'work-list',
-  segment: 'work-list'
+  segment: 'work-list',
+  priority: 'high'
 })
 @Component({
   selector: 'page-work-list',

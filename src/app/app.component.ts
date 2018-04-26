@@ -5,9 +5,6 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 
 import { Storage } from '@ionic/storage';
 
-import { ConferenceData } from '../providers/conference-data';
-import { UserData } from '../providers/user-data';
-
 export interface PageInterface {
   title: string;
   name?: string;
@@ -46,10 +43,8 @@ export class StartupApp {
 
   constructor(
     public events: Events,
-    public userData: UserData,
     public menu: MenuController,
     public platform: Platform,
-    public confData: ConferenceData,
     public storage: Storage,
     public splashScreen: SplashScreen
   ) {
@@ -64,15 +59,6 @@ export class StartupApp {
         }
         this.platformReady()
       });
-
-    // load the conference data
-    confData.load();
-
-    // decide which menu items should be hidden by current login status stored in local storage
-    this.userData.hasLoggedIn().then((hasLoggedIn) => {
-      this.enableMenu(hasLoggedIn === true);
-    });
-    this.enableMenu(true);
 
     this.listenToLoginEvents();
   }
@@ -101,7 +87,7 @@ export class StartupApp {
 
     if (page.logsOut === true) {
       // Give the menu time to close before changing to logged out
-      this.userData.logout();
+      // this.userData.logout();
     }
   }
 

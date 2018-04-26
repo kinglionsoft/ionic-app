@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpModule } from '@angular/http';
-import { NgModule, ErrorHandler, LOCALE_ID } from '@angular/core';
+import { HttpClientModule } from '@angular/common/http';
+import { NgModule, ErrorHandler } from '@angular/core';
 import { registerLocaleData } from '@angular/common';
 import localeZhHans from '@angular/common/locales/zh-Hans';
 
@@ -12,11 +12,9 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 import { IonicStorageModule } from '@ionic/storage';
 
 import { CoreModule } from '@core';
+import { PageModule } from '@pages/page.module';
 
 import { StartupApp } from './app.component';
-
-import { ConferenceData } from '../providers/conference-data';
-import { UserData } from '../providers/user-data';
 
 // region 注册语言环境
 registerLocaleData(localeZhHans);
@@ -28,14 +26,15 @@ registerLocaleData(localeZhHans);
   ],
   imports: [
     BrowserModule,
-    HttpModule,
+    HttpClientModule,
     IonicModule.forRoot(StartupApp, {
       backButtonText: '',
       tabsHideOnSubPages: true,
       model: 'ios'
     }),
     IonicStorageModule.forRoot(),
-    CoreModule
+    CoreModule,
+    PageModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -43,11 +42,8 @@ registerLocaleData(localeZhHans);
   ],
   providers: [
     { provide: ErrorHandler, useClass: IonicErrorHandler },
-    { provide: LOCALE_ID, useValue: 'zh-Hans' },
-    ConferenceData,
-    UserData,
     InAppBrowser,
-    SplashScreen
+    SplashScreen,
   ]
 })
 export class AppModule { }

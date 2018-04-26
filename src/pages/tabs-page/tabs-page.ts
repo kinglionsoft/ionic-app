@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 
-import { NavParams, IonicPage } from 'ionic-angular';
+import { NavParams, IonicPage, Tabs } from 'ionic-angular';
 
 // import { AboutPage } from '../about/about';
 // import { SchedulePage } from '../schedule/schedule';
@@ -8,9 +8,11 @@ import { NavParams, IonicPage } from 'ionic-angular';
 
 @IonicPage({
   name: 'tabs',
-  segment: 'tabs'
+  segment: 'tabs',
+  priority: 'high'
 })
 @Component({
+  selector: 'page-tabs',
   templateUrl: 'tabs-page.html'
 })
 export class TabsPage {
@@ -20,6 +22,8 @@ export class TabsPage {
   tab3Root: any = 'learning-list';
   tab4Root: any = 'user-center';
   mySelectedIndex: number;
+
+  @ViewChild('mainTabs') tabs: Tabs;
 
   constructor(navParams: NavParams) {
     this.mySelectedIndex = navParams.data.tabIndex || 0;

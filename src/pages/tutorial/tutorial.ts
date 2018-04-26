@@ -8,7 +8,8 @@ import { Storage } from '@ionic/storage';
 
 @IonicPage({
   name: 'tutorial',
-  segment: 'tutorial'
+  segment: 'tutorial',
+  priority: 'high'
 })
 @Component({
   selector: 'page-tutorial',
