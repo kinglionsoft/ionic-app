@@ -1,9 +1,10 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, Injector } from '@angular/core';
 
-import { Events, MenuController, Nav, Platform } from 'ionic-angular';
+import { MenuController, Nav, Platform } from 'ionic-angular';
 import { SplashScreen } from '@ionic-native/splash-screen';
 
 import { Storage } from '@ionic/storage';
+import { AppBaseComponent } from './app.base.component';
 
 export interface PageInterface {
   title: string;
@@ -16,7 +17,7 @@ export interface PageInterface {
 @Component({
   templateUrl: 'app.template.html'
 })
-export class StartupApp {
+export class StartupApp extends AppBaseComponent {
   // the root nav is a child of the root app component
   // @ViewChild(Nav) gets a reference to the app's root nav
   @ViewChild(Nav) nav: Nav;
@@ -42,13 +43,14 @@ export class StartupApp {
   rootPage: any;
 
   constructor(
-    public events: Events,
+    public inject: Injector,
     public menu: MenuController,
     public platform: Platform,
     public storage: Storage,
     public splashScreen: SplashScreen
   ) {
 
+    super(inject);
     // Check if the user has already seen the tutorial
     this.storage.get('hasSeenTutorial')
       .then((hasSeenTutorial) => {
@@ -96,15 +98,11 @@ export class StartupApp {
   }
 
   listenToLoginEvents() {
-    this.events.subscribe('user:login', () => {
+    this.userLogin.subscribe(() => {
       this.enableMenu(true);
     });
 
-    this.events.subscribe('user:signup', () => {
-      this.enableMenu(true);
-    });
-
-    this.events.subscribe('user:logout', () => {
+    this.userLogout.subscribe(() => {
       this.enableMenu(false);
     });
   }

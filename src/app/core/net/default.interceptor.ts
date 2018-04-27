@@ -1,20 +1,20 @@
 import { Injectable, Injector } from '@angular/core';
 import {
     HttpInterceptor, HttpRequest, HttpHandler, HttpErrorResponse,
-    HttpSentEvent, HttpHeaderResponse, HttpProgressEvent, HttpResponse, HttpUserEvent
+    HttpSentEvent, HttpHeaderResponse, HttpProgressEvent, HttpResponse, HttpUserEvent, HttpHeaders
 } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
 import { ErrorObservable } from 'rxjs/observable/ErrorObservable';
 import { mergeMap, catchError } from 'rxjs/operators';
 import { Environment } from '@env';
-import { MessageBox } from '@core';
+import { MessageBox, TokenService } from '@core';
 /**
  * 默认HTTP拦截器，其注册细节见 `app.module.ts`
  */
 @Injectable()
 export class DefaultInterceptor implements HttpInterceptor {
-    constructor(private injector: Injector) { }
+    constructor(private injector: Injector, private tokenService: TokenService) { }
 
     get msg(): MessageBox {
         return this.injector.get(MessageBox);
@@ -65,8 +65,14 @@ export class DefaultInterceptor implements HttpInterceptor {
             url = Environment.SERVER_URL + url;
         }
 
+        let token = this.tokenService.token;
+        let headers = new HttpHeaders({
+            'Authorization': `Bearer ${token}`
+        });
+
         const newReq = req.clone({
-            url: url
+            url: url,
+            headers: headers
         });
 
         return next.handle(newReq).pipe(

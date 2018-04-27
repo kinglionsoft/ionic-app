@@ -4,11 +4,15 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import * as providers from './providers';
 import { DefaultInterceptor } from './net/default.interceptor';
 import { StartupService } from './startup/startup.service';
+import { TokenService } from './token/token.service';
+import { SettingService } from './settings/setting.service';
 
 const PROVIDERS = [
     providers.MessageBox,
     providers.LoadingService,
-    providers.PlatformService
+    providers.PlatformService,
+    TokenService,
+    SettingService
 ];
 
 export function StartupServiceFactory(startupService: StartupService): Function {
